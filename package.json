@@ -1,0 +1,61 @@
+{
+  "name": "capybara",
+  "version": "1.0.0",
+  "description": "A lazy WireGuard client based on wg-easy",
+  "main": "./out/main/index.js",
+  "author": "Yuzutea",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "eslint --cache .",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
+    "typecheck:web": "vue-tsc --noEmit -p tsconfig.web.json --composite false",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "start": "electron-vite preview",
+    "dev": "electron-vite dev",
+    "build": "npm run typecheck && electron-vite build",
+    "postinstall": "electron-builder install-app-deps",
+    "build:unpack": "npm run build && electron-builder --dir",
+    "build:win": "npm run build && electron-builder --win",
+    "build:mac": "npm run build && electron-builder --mac",
+    "build:linux": "npm run build && electron-builder --linux"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
+    "animate.css": "^4.1.1",
+    "dayjs": "^1.11.19",
+    "electron-store": "^11.0.2",
+    "electron-updater": "^6.3.9",
+    "lodash": "^4.17.21",
+    "ping": "^1.0.0",
+    "pinia": "^3.0.4",
+    "wg-easy-api": "^2.1.0"
+  },
+  "devDependencies": {
+    "@electron-toolkit/eslint-config-prettier": "3.0.0",
+    "@electron-toolkit/eslint-config-ts": "^3.1.0",
+    "@electron-toolkit/tsconfig": "^2.0.0",
+    "@types/node": "^22.18.6",
+    "@vicons/material": "^0.13.0",
+    "@vitejs/plugin-vue": "^6.0.1",
+    "electron": "^38.1.2",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^4.0.1",
+    "eslint": "^9.36.0",
+    "eslint-plugin-vue": "^10.4.0",
+    "naive-ui": "^2.43.1",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "unocss": "^66.5.4",
+    "vite": "^7.1.6",
+    "vue": "^3.5.21",
+    "vue-eslint-parser": "^10.2.0",
+    "vue-tsc": "^3.0.7"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild"
+    ]
+  }
+}

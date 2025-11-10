@@ -1,6 +1,14 @@
 # Capybara
 
-A lazy WireGuard client based on wg-easy
+A lazy WireGuard client based on wg-easy.
+
+The app built with vue3 + naive-ui + electron
+
+It supports **automatic synchronization of cloud wg-easy configuration lists, real-time traffic monitoring, cross-platform, and personalized configuration.**
+
+![Light Theme](docs/images/demo-light.png)
+
+![Dark Theme](docs/images/demo-dark.png)
 
 ## Recommended IDE Setup
 

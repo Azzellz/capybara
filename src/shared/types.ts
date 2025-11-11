@@ -62,8 +62,6 @@ export interface WireGuardConfig {
 }
 
 export interface Config {
-  logo?: string
-  theme?: 'dark' | 'light'
   url: string
   title: string
   subtitle: string
@@ -71,6 +69,12 @@ export interface Config {
     enable: boolean
     interval: number // ms
   }
+  logo?: string
+  password: {
+    enable: boolean
+    value: string
+  }
+  theme?: 'dark' | 'light'
 }
 
 type DropFirstArg<T> = T extends (first: any, ...rest: infer R) => infer Ret

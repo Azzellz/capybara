@@ -1,10 +1,20 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { Config } from '@shared/types'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export const useSettingStore = defineStore('setting-store', () => {
   const setting = ref<Config | null>(null)
+  const isValid = ref<boolean>(false)
+  function setIsValid(value: boolean) {
+    isValid.value = value
+  }
+  const isEmpty = computed(() => {
+    if (!setting.value) return true
+    if (!setting.value.url) return true
+    if (setting.value.password.enable && !setting.value.password.value) return true
+    return false
+  })
 
   async function getSetting() {
     const result = await window.ipcInvoke.getConfig()
@@ -25,6 +35,9 @@ export const useSettingStore = defineStore('setting-store', () => {
   return {
     setting,
     saveSetting,
-    getSetting
+    getSetting,
+    isEmpty,
+    isValid,
+    setIsValid
   }
 })

@@ -1,33 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { WireGuardClient } from '@shared/types'
+import { Config, RemoveFirstParamFromFunctions, WireGuardClient } from '@shared/types'
 import _WireGuardAPI from 'wg-easy-api'
 const WireGuardAPI = (_WireGuardAPI as any).default || _WireGuardAPI
 import { store } from './store'
 import { parseURL, parseWireGuardConfig } from '@shared/utils'
 import { exitApp } from './utils/system'
 
-async function initAPI(config = store.get('config')) {
-  if (!config) exitApp(`Can't read config from local`)
-  const { protocol, hostname, port } = parseURL(config.url)
-  const api = new WireGuardAPI(protocol, hostname, port, import.meta.env.MAIN_VITE_SECRET)
-  await api.initSession({ password: import.meta.env.MAIN_VITE_SECRET })
-  return api
-}
-
-let _API = initAPI()
-store.onDidChange('config', (newConfig, oldConfig) => {
-  if (!newConfig || !oldConfig) return
-  if (newConfig.url !== oldConfig.url) {
-    _API = initAPI(newConfig)
-  }
-})
+let _API
 
 let prevClients: WireGuardClient[] = []
 export const API = {
   async getClients(): Promise<WireGuardClient[]> {
     try {
-      const result = await (await _API).getClients()
+      const result = await _API.getClients()
       const clients = result.data as WireGuardClient[]
       // diff
       if (prevClients.length) {
@@ -44,17 +29,46 @@ export const API = {
     }
   },
   async getClientsWithConfig(): Promise<WireGuardClient[]> {
-    const clients = await API.getClients()
-    for (const client of clients) {
-      const configResult = await (
-        await _API
-      ).getClientConfig({
-        clientId: client.id
-      })
-      client.configStr = configResult.data || ''
-      client.config = parseWireGuardConfig(client.configStr)
+    try {
+      const clients = await API.getClients()
+      for (const client of clients) {
+        const configResult = await (
+          await _API
+        ).getClientConfig({
+          clientId: client.id
+        })
+        client.configStr = configResult.data || ''
+        client.config = parseWireGuardConfig(client.configStr)
+      }
+      return clients
+    } catch (error) {
+      console.log(error)
+      return []
     }
-    return clients
+  },
+  async initSession(_?: any, configStr?: string): Promise<boolean> {
+    try {
+      let config: Config
+      if (configStr) {
+        config = JSON.parse(configStr)
+      } else {
+        config = store.get('config')
+      }
+      if (!config) exitApp(`Can't read config from local`)
+      const { protocol, hostname, port } = parseURL(config.url)
+      const password =
+        import.meta.env.MAIN_VITE_SECRET || (config.password.enable ? config.password.value : '')
+      const _testAPI = new WireGuardAPI(protocol, hostname, port)
+      const result = await _testAPI.initSession({ password })
+      const isValid = result.statusCode !== 401
+      if (isValid) {
+        _API = _testAPI
+      }
+      return isValid
+    } catch (error) {
+      console.log(error)
+      return false
+    }
   }
 }
-export type API = typeof API
+export type API = RemoveFirstParamFromFunctions<typeof API>

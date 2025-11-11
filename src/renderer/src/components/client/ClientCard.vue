@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="flex gap-2 mt-2 ml-auto">
+    <div class="flex gap-2 items-center ml-auto">
       <NButton
         v-if="!isWgRunning || !isCurrent"
         size="small"

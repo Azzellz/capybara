@@ -1,6 +1,6 @@
-import { spawn } from 'child_process'
-import { getResourceFilePath, parseWireGuardShow } from '../utils'
 import type { RemoveFirstParamFromFunctions, WireGuardCode } from '@shared/types'
+import { execa } from 'execa'
+import { getResourceFilePath, parseWireGuardShow } from '../utils'
 import { writeFile, mkdir } from 'fs/promises'
 import { API } from '../api'
 import { notification } from '../utils/system'
@@ -9,19 +9,21 @@ import { dirname } from 'path'
 export const wireguardIpcHandlers = {
   async startWireGuard(_, name: string) {
     try {
-      return new Promise<WireGuardCode>((resolve) => {
-        const child = spawn(
-          getResourceFilePath('wireguard/bin/wireguard.exe'),
-          ['/installtunnelservice', getResourceFilePath(`wireguard/conf/${name}.conf`)],
-          {
-            stdio: ['ignore', 'pipe', 'pipe']
-          }
-        )
-        child.on('close', (code) => {
-          notification(`tunnel ⌈${name}⌋ connected.`)
-          resolve(code as WireGuardCode)
-        })
-      })
+      const result = await execa(
+        getResourceFilePath('wireguard/bin/wireguard'),
+        ['/installtunnelservice', getResourceFilePath(`wireguard/conf/${name}.conf`)],
+        {
+          stdio: ['ignore', 'pipe', 'pipe']
+        }
+      )
+
+      if (result.exitCode === 0) {
+        notification(`tunnel ⌈${name}⌋ connected.`)
+        return result.exitCode as WireGuardCode
+      } else {
+        notification(`Failed to start WireGuard: ${result.stderr}`)
+        return result.exitCode as WireGuardCode
+      }
     } catch (error) {
       console.error('Failed to start WireGuard:', error)
       return -1
@@ -29,20 +31,21 @@ export const wireguardIpcHandlers = {
   },
   async stopWireGuard(_, name: string) {
     try {
-      return new Promise<WireGuardCode>((resolve) => {
-        const child = spawn(
-          getResourceFilePath('wireguard/bin/wireguard.exe'),
-          ['/uninstalltunnelservice', name],
-          {
-            stdio: ['ignore', 'pipe', 'pipe']
-          }
-        )
+      const result = await execa(
+        getResourceFilePath('wireguard/bin/wireguard.exe'),
+        ['/uninstalltunnelservice', name],
+        {
+          stdio: ['ignore', 'pipe', 'pipe']
+        }
+      )
 
-        child.on('close', (code) => {
-          notification(`tunnel ⌈${name}⌋ disconnected.`)
-          resolve(code as WireGuardCode)
-        })
-      })
+      if (result.exitCode === 0) {
+        notification(`tunnel ⌈${name}⌋ disconnected.`)
+        return result.exitCode as WireGuardCode
+      } else {
+        notification(`Failed to stop WireGuard: ${result.stderr}`)
+        return result.exitCode as WireGuardCode
+      }
     } catch (error) {
       notification(`Failed to stop WireGuard: ${error}`)
       console.error('Failed to stop WireGuard:', error)
@@ -51,19 +54,11 @@ export const wireguardIpcHandlers = {
   },
   async getWireGuardStatus() {
     try {
-      const show = await new Promise((resolve) => {
-        const child = spawn(getResourceFilePath('wireguard/bin/wg.exe'), ['show'], {
-          stdio: ['ignore', 'pipe', 'pipe']
-        })
-
-        child.stdout.on('data', (d) => {
-          const show = parseWireGuardShow(d.toString())
-          resolve(show)
-        })
-        child.on('close', () => {
-          resolve(null)
-        })
+      const { stdout } = await execa(getResourceFilePath('wireguard/bin/wg.exe'), ['show'], {
+        stdio: ['ignore', 'pipe', 'pipe']
       })
+
+      const show = parseWireGuardShow(stdout)
       return JSON.stringify(show)
     } catch (error) {
       notification(`Failed to get WireGuard status: ${error}`)

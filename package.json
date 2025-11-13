@@ -26,6 +26,7 @@
     "dayjs": "^1.11.19",
     "electron-store": "^11.0.2",
     "electron-updater": "^6.3.9",
+    "execa": "^9.6.0",
     "lodash": "^4.17.21",
     "ping": "^1.0.0",
     "pinia": "^3.0.4",

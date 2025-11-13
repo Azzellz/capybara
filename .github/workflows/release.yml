@@ -36,7 +36,7 @@ jobs:
           MAIN_VITE_TITLE: Capybara
           MAIN_VITE_SUBTITLE: A windows platform wireguard client specially built for wg-easy...
           MAIN_VITE_AUTOSYNC_ENABLE: true
-          MAIN_VITE_AUTOSYNC_INTERVAL: 1000
+          MAIN_VITE_AUTOSYNC_INTERVAL: 5000
 
       - name: Resolve version
         shell: pwsh

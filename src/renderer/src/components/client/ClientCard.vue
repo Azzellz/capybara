@@ -5,11 +5,11 @@
       <div class="flex items-center gap-2">
         <h2 :class="titleStyle">{{ client.name }}</h2>
       </div>
-      <div class="flex mt-1">
+      <div class="flex items-center mt-1">
         <div>{{ client.address }}</div>
-        <NDivider vertical style="margin-top: 4.25px; height: 12px" />
+        <NDivider vertical />
         <div>{{ formatRelativeTime(client.latestHandshakeAt!) }}</div>
-        <NDivider vertical style="margin-top: 4.25px; height: 12px" />
+        <NDivider vertical />
         <div>
           ↓ {{ formatBytes(client.transferRx) }}
           {{ client.transferRxDiff ? ` + ${formatBytes(client.transferRxDiff)}` : '' }}
@@ -18,8 +18,10 @@
           ↑ {{ formatBytes(client.transferTx) }}
           {{ client.transferTxDiff ? ` + ${formatBytes(client.transferTxDiff)}` : '' }}
         </div>
-        <NDivider vertical style="margin-top: 4.25px; height: 12px" />
-        <div v-if="delay" class="ml-2" :class="delayStyle">{{ delayDisplay }}</div>
+        <template v-if="delay">
+          <NDivider vertical />
+          <div class="ml-2" :class="delayStyle">{{ delayDisplay }}</div>
+        </template>
       </div>
     </div>
 

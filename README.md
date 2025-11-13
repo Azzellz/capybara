@@ -30,12 +30,12 @@ The content of the .env file should be as follows:
 
 ```bash
 MAIN_VITE_LOGO =   # Optional. The path to the logo image file (only online path is supported)
-MAIN_VITE_URL =   # Required. The URL of the wg-easy server
+MAIN_VITE_URL =   # Optional. The URL of the wg-easy server (if not provided, the app need to enter the value manually)
 MAIN_VITE_TITLE = Capybara   # Optional. The title of the app
 MAIN_VITE_SUBTITLE = A windows platform wireguard client specially built for wg-easy... # Optional. The subtitle of the app
 MAIN_VITE_AUTOSYNC_ENABLE = true  # Required. Whether to enable automatic synchronization of cloud wg-easy configuration lists
 MAIN_VITE_AUTOSYNC_INTERVAL = 1000  # Required. The interval (in milliseconds) for automatic synchronization of cloud wg-easy configuration lists
-MAIN_VITE_SECRET =   # Optional. The secret key for wg-easy API authentication (if not provided, the app need to enter the key manually)
+MAIN_VITE_SECRET =   # Optional. The secret key for wg-easy API authentication (if not provided, the app need to enter the value manually)
 ```
 
 ## Recommended IDE Setup

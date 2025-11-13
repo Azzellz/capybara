@@ -1,3 +1,9 @@
+<div align="center">
+
+![Capybara](docs/images/logo.png)
+
+</div>
+
 # Capybara
 
 A lazy WireGuard client based on wg-easy.

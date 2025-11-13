@@ -1,0 +1,83 @@
+name: Release Windows Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Windows artifacts
+        run: pnpm run build:win
+        env:
+          MAIN_VITE_TITLE: Capybara
+          MAIN_VITE_SUBTITLE: A windows platform wireguard client specially built for wg-easy...
+          MAIN_VITE_AUTOSYNC_ENABLE: true
+          MAIN_VITE_AUTOSYNC_INTERVAL: 1000
+
+      - name: Resolve version
+        shell: pwsh
+        run: |
+          $ref = $env:GITHUB_REF
+          if ($ref -and $ref.StartsWith('refs/tags/')) {
+            $tag = $env:GITHUB_REF_NAME
+            if (-not $tag) { $tag = $ref.Substring('refs/tags/'.Length) }
+            $version = $tag -replace '^v',''
+          } else {
+            $pkg = Get-Content 'package.json' -Raw | ConvertFrom-Json
+            $version = $pkg.version
+          }
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+          Write-Host "Version resolved: $version"
+
+      - name: Zip win-unpacked folder as capybara-version
+        shell: pwsh
+        run: |
+          if (Test-Path "dist/win-unpacked") {
+            $zipPath = "dist/capybara-$env:VERSION.zip"
+            if (Test-Path $zipPath) { Remove-Item $zipPath }
+            Compress-Archive -Path "dist/win-unpacked" -DestinationPath $zipPath
+          } else {
+            Write-Error "win-unpacked Dir not found, build may fail."
+          }
+
+      - name: List built files
+        shell: pwsh
+        run: |
+          Write-Host "Dist contents:"
+          Get-ChildItem -Recurse dist | Format-Table -AutoSize
+
+      - name: Publish Release with artifacts
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: false
+          prerelease: false
+          files: |
+            dist/capybara-${{ env.VERSION }}.zip
+            dist/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -57,12 +57,13 @@ export const wireguardIpcHandlers = {
       const { stdout } = await execa(getResourceFilePath('wireguard/bin/wg.exe'), ['show'], {
         stdio: ['ignore', 'pipe', 'pipe']
       })
-
       const show = parseWireGuardShow(stdout)
       return JSON.stringify(show)
     } catch (error) {
-      notification(`Failed to get WireGuard status: ${error}`)
-      console.error('Failed to get WireGuard status:', error)
+      if (!(error + '').startsWith('Error: No interface section found')) {
+        notification(`Failed to get WireGuard status: ${error}`)
+        console.error('Failed to get WireGuard status:', error)
+      }
       return null
     }
   },

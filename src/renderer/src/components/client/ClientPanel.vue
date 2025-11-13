@@ -17,7 +17,7 @@ const isSyncLoading = ref(false)
 const isSpeeding = ref(false)
 const delayMap = ref<Record<string, string | undefined>>({})
 
-// startup time statistics
+//#region startup time statistics
 const startupTime = ref({
   d: 0,
   h: 0,
@@ -42,6 +42,7 @@ setInterval(() => {
 const startupTimeDisplay = computed(() => {
   return `${startupTime.value.d}:${startupTime.value.h}:${startupTime.value.m}:${startupTime.value.s}`
 })
+//#endregion
 
 //#region interval auto sync clients
 let interval
@@ -53,7 +54,7 @@ watch(
     if (!settingStore.setting?.autoSync.enable) return
     interval = setInterval(async () => {
       isSyncLoading.value = true
-      await wgStore.syncClients()
+      await wgStore.sync()
     }, settingStore.setting?.autoSync.interval)
   },
   {

@@ -28,7 +28,7 @@ const settingStore = useSettingStore()
 
 async function handleInit(): Promise<void> {
   await wgStore.getClients()
-  await wgStore.syncClients()
+  await wgStore.sync()
   isReady.value = true
   isNotConfig.value = false
 }

@@ -32,6 +32,12 @@ export const useWgStore = defineStore('wg-store', () => {
     setCurrentClient(clients.value.find((c) => c.name === status.value?.interface.name) || null)
   }
 
+  // sync part
+  async function sync() {
+    await syncStatus()
+    await syncClients()
+  }
+
   // clients part
   const clients = ref<WireGuardClient[]>([])
   const clientKeepAliveMap: Map<string, boolean> = new Map()
@@ -87,6 +93,7 @@ export const useWgStore = defineStore('wg-store', () => {
     syncClients,
     status,
     getStatus,
-    syncStatus
+    syncStatus,
+    sync
   }
 })

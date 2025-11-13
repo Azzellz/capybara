@@ -49,3 +49,4 @@ publish:
   url: https://example.com/auto-updates
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/
+afterPack: ./build/after-pack.js

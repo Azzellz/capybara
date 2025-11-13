@@ -57,21 +57,21 @@ jobs:
         shell: pwsh
         run: |
           if (Test-Path "dist/win-unpacked") {
-            if (Test-Path "dist/capybara") { Remove-Item -Recurse -Force "dist/capybara" }
-            Rename-Item -Path "dist/win-unpacked" -NewName "capybara"
+            if (Test-Path "dist/capybara-windows") { Remove-Item -Recurse -Force "dist/capybara-windows" }
+            Rename-Item -Path "dist/win-unpacked" -NewName "capybara-windows"
           } else {
             Write-Error "win-unpacked dir not found, build may fail."
           }
 
-      - name: Zip dist folder as capybara-win-version
+      - name: Zip dist folder as capybara-windows-version
         shell: pwsh
         run: |
-          if (Test-Path "dist/capybara") {
-            $zipPath = "dist/capybara-win-$env:VERSION.zip"
+          if (Test-Path "dist/capybara-windows") {
+            $zipPath = "dist/capybara-windows-v$env:VERSION.zip"
             if (Test-Path $zipPath) { Remove-Item $zipPath }
-            Compress-Archive -Path "dist/capybara" -DestinationPath $zipPath
+            Compress-Archive -Path "dist/capybara-windows" -DestinationPath $zipPath
           } else {
-            Write-Error "capybara dir not found, build may fail."
+            Write-Error "capybara-windows dir not found, build may fail."
           }
 
       - name: List built files
@@ -87,7 +87,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            dist/capybara-${{ env.VERSION }}.zip
+            dist/capybara-windows-v${{ env.VERSION }}.zip
             dist/*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -53,15 +53,25 @@ jobs:
           echo "VERSION=$version" >> $env:GITHUB_ENV
           Write-Host "Version resolved: $version"
 
-      - name: Zip win-unpacked folder as capybara-version
+      - name: Rename win-unpacked folder to capybara
         shell: pwsh
         run: |
           if (Test-Path "dist/win-unpacked") {
-            $zipPath = "dist/capybara-$env:VERSION.zip"
-            if (Test-Path $zipPath) { Remove-Item $zipPath }
-            Compress-Archive -Path "dist/win-unpacked" -DestinationPath $zipPath
+            if (Test-Path "dist/capybara") { Remove-Item -Recurse -Force "dist/capybara" }
+            Rename-Item -Path "dist/win-unpacked" -NewName "capybara"
           } else {
-            Write-Error "win-unpacked Dir not found, build may fail."
+            Write-Error "win-unpacked dir not found, build may fail."
+          }
+
+      - name: Zip dist folder as capybara-win-version
+        shell: pwsh
+        run: |
+          if (Test-Path "dist/capybara") {
+            $zipPath = "dist/capybara-win-$env:VERSION.zip"
+            if (Test-Path $zipPath) { Remove-Item $zipPath }
+            Compress-Archive -Path "dist/capybara" -DestinationPath $zipPath
+          } else {
+            Write-Error "capybara dir not found, build may fail."
           }
 
       - name: List built files

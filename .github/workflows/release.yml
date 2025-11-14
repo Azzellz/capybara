@@ -82,12 +82,22 @@ jobs:
           Write-Host "Dist contents:"
           Get-ChildItem -Recurse dist | Format-Table -AutoSize
 
+      - name: Resolve previous tag
+        id: prev_tag
+        shell: pwsh
+        run: |
+          $tags = git tag --sort=-v:refname
+          $arr = $tags -split "`n" | Where-Object { $_ -ne "" }
+          if ($arr.Length -ge 2) { $prev = $arr[1] } else { $prev = "" }
+          echo "tag=$prev" >> $env:GITHUB_OUTPUT
+          Write-Host "Previous tag: $prev"
+
       - name: Build Changelog
         if: startsWith(github.ref, 'refs/tags/')
         id: changelog
         uses: mikepenz/release-changelog-builder-action@v5
         with:
-          fromTag: ${{ github.event.base_ref }}
+          fromTag: ${{ steps.prev_tag.outputs.tag }}
           toTag: ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

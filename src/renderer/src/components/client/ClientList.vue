@@ -3,53 +3,41 @@
 import { useWgStore } from '@renderer/stores/wg'
 import { ref } from 'vue'
 import ClientLine from './ClientLine.vue'
-import { WireGuardClient, WireGuardCode } from '@shared/types'
-import { delay } from '@shared/utils'
+import { WireGuardClient } from '@shared/types'
+import { sleep } from '@shared/utils'
 import { NDivider, useMessage, NScrollbar } from 'naive-ui'
 
 const message = useMessage()
 const wgStore = useWgStore()
 const isLoading = ref(false)
 
-//#region card emit handlers
 function finishToggle() {
   isLoading.value = false
   message.success(`${wgStore.isWgRunning ? 'Started' : 'Stopped'} successfully!`)
 }
-async function handleToggle(client: WireGuardClient, name: string) {
-  let code: WireGuardCode
-  isLoading.value = true
-  wgStore.setCurrentClient(client)
-  await delay(1000) // Prevent too fast toggling
-
-  if (wgStore.isWgRunning) {
-    if (wgStore.currentClient && wgStore.currentClient.id !== client.id) {
-      // Switch client:
-      // Stop current client first
-      code = await window.ipcInvoke.stopWireGuard(wgStore.currentClient.name)
-      if (code !== 0) {
-        finishToggle()
-        return
-      }
-      await delay(1000) // Wait for a while
-      // Then start new client
-      code = await window.ipcInvoke.startWireGuard(name)
-      wgStore.setCurrentClient(client)
-      finishToggle()
-      return
-    } else {
-      code = await window.ipcInvoke.stopWireGuard(name)
-    }
-  } else {
-    code = await window.ipcInvoke.startWireGuard(name)
+async function handleStart(client: WireGuardClient) {
+  // Switch client if current client is not the same
+  if (wgStore.currentClient && !wgStore.getIsCurrent(client)) {
+    await handleStop(wgStore.currentClient)
   }
+  isLoading.value = true
+  await sleep(1000)
+  const code = await window.ipcInvoke.startWireGuard(client.name)
   if (code === 0) {
-    wgStore.setIsWgRunning(!wgStore.isWgRunning)
-    wgStore.isWgRunning ? wgStore.setCurrentClient(client) : wgStore.setCurrentClient(null)
+    wgStore.setIsWgRunning(true)
+    wgStore.setCurrentClient(client)
   }
   finishToggle()
 }
-//#endregion
+async function handleStop(client: WireGuardClient) {
+  isLoading.value = true
+  const code = await window.ipcInvoke.stopWireGuard(client.name)
+  if (code === 0) {
+    wgStore.setIsWgRunning(false)
+    wgStore.setCurrentClient(null)
+  }
+  finishToggle()
+}
 </script>
 
 <template>
@@ -59,9 +47,10 @@ async function handleToggle(client: WireGuardClient, name: string) {
         :client="client"
         :is-loading="isLoading"
         :is-wg-running="wgStore.isWgRunning"
-        :is-current="wgStore.currentClient?.id === client.id"
+        :is-current="wgStore.getIsCurrent(client)"
         :delay="wgStore.delayMap[client.id]"
-        @toggle="(name) => handleToggle(client, name)"
+        @start="(client) => handleStart(client)"
+        @stop="(client) => handleStop(client)"
       />
       <NDivider style="margin-block: 0px" />
     </template>

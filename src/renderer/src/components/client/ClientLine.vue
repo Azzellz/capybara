@@ -32,7 +32,7 @@
         type="primary"
         :loading="isLoading"
         :disabled="isDisabled"
-        @click="emits('toggle', client.name)"
+        @click="emits('start', client)"
       >
         <template #icon>
           <StartIcon />
@@ -44,7 +44,7 @@
         type="error"
         :loading="isLoading"
         :disabled="isDisabled"
-        @click="emits('toggle', client.name)"
+        @click="emits('stop', client)"
       >
         <template #icon>
           <StopIcon />
@@ -88,7 +88,8 @@ const props = defineProps<{
   delay?: string
 }>()
 const emits = defineEmits<{
-  toggle: [name: string]
+  start: [client: WireGuardClient]
+  stop: [client: WireGuardClient]
 }>()
 const isDisabled = computed(() => {
   if (props.isLoading && !props.isCurrent) {
@@ -98,12 +99,7 @@ const isDisabled = computed(() => {
   }
   return false
 })
-const isLoading = computed(() => {
-  if (props.isLoading && props.isCurrent) {
-    return true
-  }
-  return false
-})
+const isLoading = computed(() => props.isLoading && props.isCurrent)
 const titleStyle = computed(() => {
   const base = 'text-2xl font-bold'
   if (props.isCurrent) {

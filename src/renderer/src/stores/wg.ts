@@ -12,6 +12,9 @@ export const useWgStore = defineStore('wg-store', () => {
     }
     currentClient.value = client
   }
+  const getIsCurrent = (client: WireGuardClient) => {
+    return currentClient.value?.id === client.id
+  }
 
   // running part
   const isWgRunning = ref(false)
@@ -87,6 +90,7 @@ export const useWgStore = defineStore('wg-store', () => {
   return {
     currentClient,
     setCurrentClient,
+    getIsCurrent,
     isWgRunning,
     setIsWgRunning,
     clients,

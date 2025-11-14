@@ -32,12 +32,18 @@ export const useSettingStore = defineStore('setting-store', () => {
     return err
   }
 
+  async function restoreSetting() {
+    await window.ipcInvoke.restoreConfig()
+    await getSetting()
+  }
+
   return {
     setting,
     saveSetting,
     getSetting,
     isEmpty,
     isValid,
-    setIsValid
+    setIsValid,
+    restoreSetting
   }
 })

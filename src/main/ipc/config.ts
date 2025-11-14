@@ -1,5 +1,5 @@
 import { Config, RemoveFirstParamFromFunctions } from '@shared/types'
-import { store } from '../store'
+import { defaults, store } from '../store'
 
 export const configIpcHandlers = {
   async getConfig(): Promise<Config | null> {
@@ -18,6 +18,14 @@ export const configIpcHandlers = {
       const errorMsg = 'Failed to write config file:' + error
       console.error(errorMsg)
       return errorMsg
+    }
+  },
+  async restoreConfig(): Promise<void> {
+    try {
+      store.set('config', defaults.config)
+    } catch (error) {
+      const errorMsg = 'Failed to restore config file:' + error
+      console.error(errorMsg)
     }
   }
 }

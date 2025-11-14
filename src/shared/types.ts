@@ -65,6 +65,7 @@ export interface Config {
   url: string
   title: string
   subtitle: string
+  theme: 'dark' | 'light'
   autoSync: {
     enable: boolean
     interval: number // ms
@@ -74,7 +75,6 @@ export interface Config {
     enable: boolean
     value: string
   }
-  theme?: 'dark' | 'light'
 }
 
 type DropFirstArg<T> = T extends (first: any, ...rest: infer R) => infer Ret

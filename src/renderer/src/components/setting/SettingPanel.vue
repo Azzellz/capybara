@@ -7,14 +7,24 @@
           Complete your initial configuration and click the save button on the right
         </div>
       </div>
-      <div class="ml-auto flex gap-2">
-        <NButton text :loading="isLoading" type="warning" @click="handleValidate">
+      <div class="ml-auto flex items-center gap-2">
+        <NButton text :loading="isSaving" type="warning" @click="handleValidate">
           <template #icon>
             <NIcon size="26">
               <SaveIcon />
             </NIcon>
           </template>
         </NButton>
+        <template v-if="!isInit">
+          <NDivider vertical />
+          <NButton text :loading="isRestoring" type="info" @click="handleRestore">
+            <template #icon>
+              <NIcon size="28">
+                <RestoreIcon />
+              </NIcon>
+            </template>
+          </NButton>
+        </template>
       </div>
     </div>
     <NDivider style="margin-top: 8px; margin-bottom: 16px" />
@@ -71,7 +81,7 @@ import {
   useMessage,
   NIcon
 } from 'naive-ui'
-import { SaveRound as SaveIcon } from '@vicons/material'
+import { SaveRound as SaveIcon, RestoreRound as RestoreIcon } from '@vicons/material'
 import { useSettingStore } from '@renderer/stores/setting'
 import { ref } from 'vue'
 import type { Config } from '@shared/types'
@@ -82,14 +92,15 @@ const { onSaved } = defineProps<{
   isInit?: boolean
   onSaved?: () => void
 }>()
-const isLoading = ref(false)
+const isSaving = ref(false)
+const isRestoring = ref(false)
 const modal = useModal()
 const message = useMessage()
 const settingStore = useSettingStore()
 const setting = ref<Config>(cloneDeep(settingStore.setting)!)
 
 async function handleSaveSetting(): Promise<void> {
-  isLoading.value = true
+  isSaving.value = true
   const err = await settingStore.saveSetting(cloneDeep(setting.value))
   if (err) {
     message.error(err)
@@ -97,11 +108,19 @@ async function handleSaveSetting(): Promise<void> {
     message.success('Save successfully.')
     modal.destroyAll()
   }
-  isLoading.value = false
+  isSaving.value = false
+}
+
+async function handleRestore(): Promise<void> {
+  isRestoring.value = true
+  await settingStore.restoreSetting()
+  setting.value = cloneDeep(settingStore.setting)!
+  isRestoring.value = false
+  message.success('Restore successfully.')
 }
 
 async function handleValidate(): Promise<void> {
-  isLoading.value = true
+  isSaving.value = true
   if (!isValidURL(setting.value.url)) {
     message.error('URL is invalid.')
   } else if (setting.value.password.enable && setting.value.password.value === '') {
@@ -117,6 +136,6 @@ async function handleValidate(): Promise<void> {
       message.error('Unable to complete authentication, please check URL and PASSWORD.')
     }
   }
-  isLoading.value = false
+  isSaving.value = false
 }
 </script>

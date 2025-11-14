@@ -16,7 +16,6 @@ const settingStore = useSettingStore()
 const isSyncLoading = ref(false)
 const isSpeeding = ref(false)
 const isDownloading = ref(false)
-const delayMap = ref<Record<string, string | undefined>>({})
 
 //#region startup time statistics
 const startupTime = ref({
@@ -53,9 +52,14 @@ watch(
     clearInterval(interval)
     isSyncLoading.value = false
     if (!settingStore.setting?.autoSync.enable) return
-    interval = setInterval(async () => {
+    // If interval is not set, sync once
+    if (!interval) {
       isSyncLoading.value = true
-      await wgStore.sync()
+      wgStore.sync()
+    }
+    interval = setInterval(() => {
+      isSyncLoading.value = true
+      wgStore.sync()
     }, settingStore.setting?.autoSync.interval)
   },
   {
@@ -76,13 +80,14 @@ async function handleSync() {
 async function handleSpeed() {
   isSpeeding.value = true
   for (const client of wgStore.clients) {
-    if (client.isKeepAlive) {
-      delayMap.value[client.id] = await window.ipcInvoke.ping(client.address)
+    if (client.isKeepAlive || wgStore.currentClient?.id === client.id) {
+      wgStore.delayMap[client.id] = await window.ipcInvoke.ping(client.address)
     } else {
-      delayMap.value[client.id] = void 0
+      wgStore.delayMap[client.id] = void 0
     }
   }
   isSpeeding.value = false
+  message.success(`Speed test completed.`)
 }
 
 async function handleDownload() {

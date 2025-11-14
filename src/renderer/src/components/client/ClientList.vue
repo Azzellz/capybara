@@ -11,8 +11,6 @@ const message = useMessage()
 const wgStore = useWgStore()
 const isLoading = ref(false)
 
-const delayMap = ref<Record<string, string | undefined>>({})
-
 //#region card emit handlers
 function finishToggle() {
   isLoading.value = false
@@ -51,9 +49,6 @@ async function handleToggle(client: WireGuardClient, name: string) {
   }
   finishToggle()
 }
-function handleGetStatus() {
-  window.ipcInvoke.getWireGuardStatus()
-}
 //#endregion
 </script>
 
@@ -65,9 +60,8 @@ function handleGetStatus() {
         :is-loading="isLoading"
         :is-wg-running="wgStore.isWgRunning"
         :is-current="wgStore.currentClient?.id === client.id"
-        :delay="delayMap[client.id]"
+        :delay="wgStore.delayMap[client.id]"
         @toggle="(name) => handleToggle(client, name)"
-        @get-status="handleGetStatus"
       />
       <NDivider style="margin-block: 0px" />
     </template>

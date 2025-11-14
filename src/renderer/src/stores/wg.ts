@@ -19,6 +19,9 @@ export const useWgStore = defineStore('wg-store', () => {
     isWgRunning.value = running
   }
 
+  // delay part
+  const delayMap = ref<Record<string, string | undefined>>({})
+
   // status part
   const status = ref<WireGuardStatus | null>(null)
   async function getStatus() {
@@ -92,6 +95,7 @@ export const useWgStore = defineStore('wg-store', () => {
     status,
     getStatus,
     syncStatus,
-    sync
+    sync,
+    delayMap
   }
 })

@@ -55,7 +55,7 @@
           <CopyIcon />
         </template>
       </NButton>
-      <NButton size="small" @click="handleOpenDetail">
+      <NButton size="small" @click="handleDetail">
         <template #icon>
           <DetailsIcon />
         </template>
@@ -89,7 +89,6 @@ const props = defineProps<{
 }>()
 const emits = defineEmits<{
   toggle: [name: string]
-  getStatus: []
 }>()
 const isDisabled = computed(() => {
   if (props.isLoading && !props.isCurrent) {
@@ -142,7 +141,7 @@ async function handleCopy(content: string): Promise<void> {
   }
 }
 
-async function handleOpenDetail(): Promise<void> {
+async function handleDetail(): Promise<void> {
   modal.create({
     render() {
       return h(ClientDetail, {

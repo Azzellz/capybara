@@ -1,10 +1,9 @@
 import type { RemoveFirstParamFromFunctions, WireGuardCode } from '@shared/types'
 import { execa } from 'execa'
 import { getResourceFilePath, parseWireGuardShow } from '../utils'
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, rm } from 'fs/promises'
 import { API } from '../api'
 import { notification } from '../utils/system'
-import { dirname } from 'path'
 
 export const wireguardIpcHandlers = {
   async startWireGuard(_, name: string) {
@@ -67,20 +66,22 @@ export const wireguardIpcHandlers = {
       return null
     }
   },
-  async syncWireGuardConfigs() {
+  async downloadWireGuardConfigs() {
     try {
+      const dir = getResourceFilePath('wireguard/conf')
+      await rm(dir, { recursive: true, force: true })
+      await mkdir(dir, { recursive: true })
       const clients = await API.getClientsWithConfig()
       for (const client of clients) {
-        if (client.configStr) {
+        if (client.enabled && client.configStr) {
           const path = getResourceFilePath(`wireguard/conf/${client.name}.conf`)
-          await mkdir(dirname(path), { recursive: true })
           await writeFile(path, client.configStr)
         }
       }
       return true
     } catch (error) {
-      notification(`Failed to sync WireGuard configs: ${error}`)
-      console.error('Failed to sync WireGuard configs:', error)
+      notification(`Failed to download WireGuard configs: ${error}`)
+      console.error('Failed to download WireGuard configs:', error)
       return false
     }
   }

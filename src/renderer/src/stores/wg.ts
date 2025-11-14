@@ -34,8 +34,8 @@ export const useWgStore = defineStore('wg-store', () => {
 
   // sync part
   async function sync() {
-    await syncStatus()
     await syncClients()
+    await syncStatus()
   }
 
   // clients part
@@ -79,8 +79,6 @@ export const useWgStore = defineStore('wg-store', () => {
   }
   async function syncClients() {
     await getClients()
-    const isSuccess = await window.ipcInvoke.syncWireGuardConfigs()
-    return isSuccess
   }
 
   return {

@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="ml-auto flex items-center gap-2">
-        <NButton text :loading="isSaving" type="warning" @click="handleValidate">
+        <NButton text :loading="isSaving" @click="handleValidate">
           <template #icon>
             <NIcon size="26">
               <SaveIcon />
@@ -17,7 +17,7 @@
         </NButton>
         <template v-if="!isInit">
           <NDivider vertical />
-          <NButton text :loading="isRestoring" type="info" @click="handleRestore">
+          <NButton text :loading="isRestoring" @click="handleRestore">
             <template #icon>
               <NIcon size="28">
                 <RestoreIcon />

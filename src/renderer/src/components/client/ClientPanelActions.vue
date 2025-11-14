@@ -48,7 +48,8 @@ const startupTimeDisplay = computed(() => {
 let interval
 watch(
   () => settingStore.setting?.autoSync,
-  () => {
+  (newVal, oldVal) => {
+    if (newVal?.enable === oldVal?.enable) return
     clearInterval(interval)
     isSyncLoading.value = false
     if (!settingStore.setting?.autoSync.enable) return

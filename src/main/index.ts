@@ -4,6 +4,7 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { registerIpcHandlers } from './ipc'
+import { startHttpServer } from './server'
 
 let win: BrowserWindow, tray: Tray
 function createWindow() {
@@ -88,6 +89,9 @@ app.whenReady().then(() => {
 
   // IPC handlers
   registerIpcHandlers()
+
+  // Start the HTTP server
+  startHttpServer()
 
   // Create the main window
   win = createWindow()

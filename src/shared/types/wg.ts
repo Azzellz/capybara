@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export type WireGuardCode = 0 | 1 | -1
 
 export interface WireGuardStatus {
@@ -59,28 +58,4 @@ export interface WireGuardConfig {
     endpoint: string
     persistentKeepalive: number
   }
-}
-
-export interface Config {
-  url: string
-  title: string
-  subtitle: string
-  theme: 'dark' | 'light'
-  autoSync: {
-    enable: boolean
-    interval: number // ms
-  }
-  logo?: string
-  password: {
-    enable: boolean
-    value: string
-  }
-}
-
-type DropFirstArg<T> = T extends (first: any, ...rest: infer R) => infer Ret
-  ? (...args: R) => Ret
-  : T
-
-export type RemoveFirstParamFromFunctions<T> = {
-  [K in keyof T]: DropFirstArg<T[K]>
 }

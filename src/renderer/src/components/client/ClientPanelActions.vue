@@ -78,6 +78,7 @@ async function handleSync() {
   message.success(`Sync from ${settingStore.setting?.url}.`)
 }
 
+let speedTestInterval
 async function handleSpeed() {
   isSpeeding.value = true
   for (const client of wgStore.clients) {
@@ -87,6 +88,12 @@ async function handleSpeed() {
       wgStore.delayMap[client.id] = void 0
     }
   }
+  clearInterval(speedTestInterval)
+  speedTestInterval = setInterval(() => {
+    for (const client of wgStore.clients) {
+      wgStore.delayMap[client.id] = void 0
+    }
+  }, 5000)
   isSpeeding.value = false
   message.success(`Speed test completed.`)
 }

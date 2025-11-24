@@ -6,7 +6,7 @@
 
 # Capybara
 
-A lazy WireGuard client based on wg-easy.
+A versatile WireGuard client for the Windows platform, based on wg-easy.
 
 The app built with vue3 + naive-ui + electron.
 

@@ -1,35 +1,31 @@
 import { Hono } from 'hono'
 import fs from 'fs/promises'
 import { existsSync } from 'fs'
-import type { DownloadFileRequest, UploadFileRequest } from '@shared/types'
+import type { DownloadFileRequest, UploadFileRequest, ClientFile } from '@shared/types'
 import { join, normalize } from 'path'
 import { parseBody } from 'hono/utils/body'
+import { getAllFilePaths } from '../../utils'
 
 export const FileService = new Hono()
 
 // Get file list
-FileService.get('/list/:paths', async (c) => {
-  const paths = c.req.param('paths')
-  const fileList = paths.split(',').map(async (path) => {
+FileService.get('/list/:dir', async (c) => {
+  const dir = c.req.param('dir')
+  const fileList: ClientFile[] = []
+  const results = await getAllFilePaths(dir, 0)
+  for (const path of results) {
     const exists = existsSync(path)
     const stat = exists ? await fs.stat(path) : null
-    if (!exists || !stat) {
-      return {
-        path,
-        exists,
-        size: 0,
-        name: ''
-      }
-    } else {
-      return {
+    if (exists && stat) {
+      fileList.push({
         path,
         exists,
         size: stat.size,
-        name: stat.isDirectory() ? '' : path.split('/').pop() || ''
-      }
+        isDir: stat.isDirectory()
+      })
     }
-  })
-  return c.json(fileList)
+  }
+  return c.json({ list: fileList })
 })
 
 // Download file

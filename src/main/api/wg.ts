@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Config, RemoveFirstParamFromFunctions, WireGuardClient } from '@shared/types'
+import { Config, WireGuardClient } from '@shared/types'
 import _WireGuardAPI from 'wg-easy-api'
 const WireGuardAPI = (_WireGuardAPI as any).default || _WireGuardAPI
-import { store } from './store'
+import { store } from '../store'
 import { parseURL, parseWireGuardConfig } from '@shared/utils'
-import { exitApp } from './utils/system'
+import { exitApp } from '../utils/system'
 
 let _API
 
 let prevClients: WireGuardClient[] = []
-export const API = {
+export const WgAPI = {
   async getClients(): Promise<WireGuardClient[]> {
     try {
       const result = await _API.getClients()
@@ -30,7 +30,7 @@ export const API = {
   },
   async getClientsWithConfig(): Promise<WireGuardClient[]> {
     try {
-      const clients = await API.getClients()
+      const clients = await WgAPI.getClients()
       for (const client of clients) {
         const configResult = await (
           await _API
@@ -71,4 +71,3 @@ export const API = {
     }
   }
 }
-export type API = RemoveFirstParamFromFunctions<typeof API>

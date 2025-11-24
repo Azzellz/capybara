@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { defineStore } from 'pinia'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { WireGuardStatus, type WireGuardClient } from '@shared/types'
 
 export const useWgStore = defineStore('wg-store', () => {
@@ -46,6 +46,12 @@ export const useWgStore = defineStore('wg-store', () => {
 
   // clients part
   const clients = ref<WireGuardClient[]>([])
+  const keepAliveClients = computed(() => {
+    return clients.value.filter((c) => c.isKeepAlive)
+  })
+  const idleClients = computed(() => {
+    return clients.value.filter((c) => !c.isKeepAlive && c.id !== currentClient.value?.id)
+  })
   const clientKeepAliveMap: Map<string, boolean> = new Map()
   let clientKeepAliveInterval: number
   watch(
@@ -100,6 +106,8 @@ export const useWgStore = defineStore('wg-store', () => {
     getStatus,
     syncStatus,
     sync,
-    delayMap
+    delayMap,
+    keepAliveClients,
+    idleClients
   }
 })

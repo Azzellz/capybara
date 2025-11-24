@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { NCard } from 'naive-ui'
+import FileActions from './FileActions.vue'
+import FilePeerList from './FilePeerList.vue'
 </script>
 
 <template>
-  <NCard>
-    <h1>File Module</h1>
-  </NCard>
+  <main class="py-2">
+    <FileActions />
+    <FilePeerList />
+  </main>
 </template>

@@ -10,6 +10,6 @@ app.route('/file', FileService)
 
 export async function startHttpServer(): Promise<void> {
   serve(app, (info) => {
-    console.log(`Capybara Server Listening on http://localhost:${info.port}`)
+    console.log(`Capybara Server Listening on http://${info.address}:${info.port}`)
   })
 }

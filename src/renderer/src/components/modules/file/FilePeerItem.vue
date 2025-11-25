@@ -15,7 +15,7 @@
       <div class="flex gap-2 ml-auto">
         <NInput v-model:value="path" placeholder="C:\Program Files" clearable>
           <template #prefix>
-            <span class="text-gray"> Path: </span>
+            <span class="text-gray"> Source: </span>
           </template>
         </NInput>
         <NInputNumber
@@ -29,30 +29,64 @@
           <template #prefix> <span class="text-gray"> Port: </span> </template>
         </NInputNumber>
         <NButton type="primary" :disabled="!isAllowGet" @click="handleGet"> Get </NButton>
-        <NButton type="info" :disabled="fileList.length === 0" @click="handleSync"> Sync </NButton>
+        <NButton type="info" :disabled="selectedFileList.length === 0" @click="handleSync">
+          Sync
+        </NButton>
+        <NButton type="warning" :disabled="fileList.length === 0" @click="handleSelectAll">
+          {{ selectedFileList.length === fileList.length ? 'UnAll' : 'All' }}
+        </NButton>
+        <NButton type="error" :disabled="fileList.length === 0" @click="handleResetFiles">
+          Reset
+        </NButton>
       </div>
     </div>
+    <!-- File Tree -->
     <div v-if="isExpand" class="mt-5 flex flex-col gap-2">
-      <div v-for="(file, index) in fileList" :key="index" class="flex">
-        <div>{{ file.path }}</div>
-      </div>
+      <FileTree
+        v-model:selected-files="selectedFileList"
+        :files="fileList"
+        :status-getter="(path) => statusMap.get(client.id + path)"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { QueryFileListResponse, WireGuardClient } from '@shared/types'
-import type { ClientFile } from '@shared/types/client'
-import axios, { AxiosResponse } from 'axios'
+import type { ClientFile, FileSyncStatus } from '@shared/types/client'
+import axios, { type AxiosResponse } from 'axios'
 import { NButton, NInputNumber, NInput, NIcon, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
 import { ExpandMoreRound as ExpandMoreIcon } from '@vicons/material'
+import FileTree from './FileTree.vue'
 
 const props = defineProps<{
   client: WireGuardClient
   isCurrent: boolean
+  statusMap: Map<string, FileSyncStatus>
 }>()
 
+const emits = defineEmits<{
+  (e: 'sync', baseURL: string, sourcePath: string, files: ClientFile[]): void
+  (e: 'reset-status'): void
+}>()
+
+const message = useMessage()
+
+const path = ref('')
+const port = ref(3000)
+const isExpand = ref(false)
+const fileList = ref<ClientFile[]>([])
+const selectedFileList = ref<ClientFile[]>([])
+
+const isAllowGet = computed(() => {
+  const isValidPort = port.value >= 1024 && port.value <= 65535
+  const isValidPath = !!path.value
+  return isValidPort && isValidPath
+})
+const baseURL = computed(() => {
+  return `http://${props.client.address}:${port.value}/file`
+})
 const titleStyle = computed(() => {
   const base = 'text-2xl font-bold'
   if (props.isCurrent) {
@@ -64,19 +98,9 @@ const titleStyle = computed(() => {
   }
 })
 
-const path = ref('')
-const port = ref(3000)
-const message = useMessage()
-const isAllowGet = computed(() => {
-  const isValidPort = port.value >= 1024 && port.value <= 65535
-  const isValidPath = !!path.value
-  return isValidPort && isValidPath
-})
-const isExpand = ref(false)
-const fileList = ref<ClientFile[]>([])
 async function handleGet(): Promise<void> {
   const encodedPath = encodeURIComponent(path.value.replace(/\\/g, '/'))
-  const url = `//${props.client.address}:${port.value}/file/list/${encodedPath}`
+  const url = `${baseURL.value}/list/${encodedPath}`
   const result: AxiosResponse<QueryFileListResponse> = await axios.get(url)
   if (result.data.list) {
     fileList.value = result.data.list
@@ -84,7 +108,22 @@ async function handleGet(): Promise<void> {
     message.success('File list retrieved successfully')
   }
 }
-async function handleSync(): Promise<void> {
-  console.log(123)
+
+function handleSync(): void {
+  emits('sync', baseURL.value, path.value, selectedFileList.value)
+}
+
+function handleSelectAll(): void {
+  if (selectedFileList.value === fileList.value) {
+    selectedFileList.value = []
+  } else {
+    selectedFileList.value = fileList.value
+  }
+  emits('reset-status')
+}
+function handleResetFiles(): void {
+  emits('reset-status')
+  fileList.value = []
+  selectedFileList.value = []
 }
 </script>

@@ -2,6 +2,11 @@
 
 <img src="docs/images/logo.png" alt="Capybara" height="140"/>
 
+<br/>
+<!-- Badgen tags -->
+<img src="https://badgen.net/badge/Capybara/WireGuard%20Client/cyan" alt="Capybara WireGuard Client"/>
+<img src="https://badgen.net/badge/version/v1.1.0/blue" alt="Version"/>
+
 </div>
 
 # Capybara

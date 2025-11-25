@@ -1,78 +1,121 @@
 <div align="center">
 
-![Capybara](docs/images/logo.png)
+<img src="docs/images/logo.png" alt="Capybara" height="140"/>
 
 </div>
 
 # Capybara
 
-A versatile WireGuard client for the Windows platform, based on wg-easy.
+A versatile WireGuard client for Windows (also buildable for macOS & Linux), inspired by wg-easy, built with Vue 3 + Naive UI + Electron.
 
-The app built with vue3 + naive-ui + electron.
-
-It supports **automatic synchronization of cloud wg-easy configuration lists, real-time traffic monitoring, cross-platform, and personalized configuration.**
+> Supports automatic cloud sync of wg-easy configurations, real‑time traffic monitoring, cross‑platform builds, and flexible personalization.
 
 ![Light Theme](docs/images/demo-light.png)
-
 ![Dark Theme](docs/images/demo-dark.png)
 
-## How to use
+## Key Features
 
-There are two ways to use Capybara:
+- Automatic periodic sync of wg-easy peer configuration lists
+- Real-time traffic monitoring per peer
+- Inline editing & personalized configuration
+- Cross-platform build targets (Win / macOS / Linux)
+- Secure handling of secret (build-time embedding or runtime input)
+- Customizable branding (logo, title, subtitle)
 
-#### Clone the project and then build and distribute the product yourself
+## Usage Options
 
-This approach is recommended because the key is embedded in the source code and protected with security measures such as obfuscation, encryption, etc
+### 1. Clone & Self-Build (Recommended)
 
-#### Use the version that is already built and then configure it in the settings
+Embeds the secret at build time (combined with obfuscation / encryption strategies). Suitable if you control distribution and want minimal runtime input.
 
-Please note that since Capybara needs to configure the wg-easy key to function properly, you need to make sure that your key is not leaked
+### 2. Use Prebuilt Release
 
-## Environment variables
+Download a packaged build and configure the server URL and secret inside Settings. Ensure you protect and rotate your wg-easy API secret.
 
-If you are building it yourself, then create the .env file in the project root directory.
+## Security Notes
 
-The content of the .env file should be as follows:
+- Do not publish builds containing production secrets to untrusted channels.
+- Prefer environment injection or runtime entry in shared environments.
+- Consider secret rotation if a distributed binary is leaked.
 
-```bash
-MAIN_VITE_LOGO =   # Optional. The path to the logo image file (only online path is supported)
-MAIN_VITE_URL =   # Optional. The URL of the wg-easy server (if not provided, the app need to enter the value manually)
-MAIN_VITE_TITLE = Capybara   # Optional. The title of the app
-MAIN_VITE_SUBTITLE = A windows platform wireguard client specially built for wg-easy... # Optional. The subtitle of the app
-MAIN_VITE_AUTOSYNC_ENABLE = true  # Required. Whether to enable automatic synchronization of cloud wg-easy configuration lists
-MAIN_VITE_AUTOSYNC_INTERVAL = 5000  # Required. The interval (in milliseconds) for automatic synchronization of cloud wg-easy configuration lists
-MAIN_VITE_SECRET =   # Optional. The secret key for wg-easy API authentication (if not provided, the app need to enter the value manually)
+## Environment Variables (.env in project root)
+
+All values are string-based; omit quotes unless needed.
+
+```
+MAIN_VITE_LOGO=                 # Optional: Online image URL for a custom logo
+MAIN_VITE_URL=                  # Optional: Default wg-easy server base URL
+MAIN_VITE_TITLE=Capybara        # Optional: Application title
+MAIN_VITE_SUBTITLE=A Windows platform WireGuard client for wg-easy...  # Optional subtitle
+MAIN_VITE_AUTOSYNC_ENABLE=true  # Required: Enable automatic remote configuration sync (true/false)
+MAIN_VITE_AUTOSYNC_INTERVAL=5000 # Required: Sync interval in ms (e.g. 5000)
+MAIN_VITE_SECRET=               # Optional: wg-easy API secret; if absent user must enter manually
 ```
 
-## Recommended IDE Setup
+Tips:
 
-- [VSCode](https://code.visualstudio.com/) + [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) + [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+- Set a reasonable interval (e.g. 3000–10000 ms) to balance freshness and load.
+- Omit MAIN_VITE_SECRET for shared builds; let users supply it securely.
 
-## Project Setup
+## Development Environment
 
-### Install
+Recommended: VS Code + ESLint + Prettier + Volar.
 
-```bash
-$ pnpm install
-```
+## Prerequisites
 
-### Development
+- Node.js (LTS recommended)
+- pnpm (package manager)
+- Administrator privileges (Windows) for dev mode (required to manage WireGuard service)
 
-You need to enable Admin Mode to successfully launch Dev Mode
-
-```bash
-$ pnpm dev
-```
-
-### Build
+## Install
 
 ```bash
-# For windows
-$ pnpm build:win
-
-# For macOS
-$ pnpm build:mac
-
-# For Linux
-$ pnpm build:linux
+pnpm install
 ```
+
+## Run (Development)
+
+Enable Administrator mode (Windows) before starting:
+
+```bash
+pnpm dev
+```
+
+## Build
+
+```bash
+# Windows
+pnpm build:win
+
+# macOS
+pnpm build:mac
+
+# Linux
+pnpm build:linux
+```
+
+Artifacts will appear in the dist directory. Sign binaries where applicable.
+
+## Troubleshooting
+
+- WireGuard not initializing: verify admin privileges.
+- Sync not working: check MAIN_VITE_URL reachability and secret validity.
+- UI assets missing: ensure online logo URL is accessible over HTTPS.
+
+## License
+
+(Add license info here if applicable.)
+
+## Disclaimer
+
+Capybara interacts with wg-easy API endpoints; ensure compliance with your infrastructure security policies.
+
+## Roadmap (Optional)
+
+- Cross-platform builds for macOS & Linux
+- Multi-server profiles
+- Tray integration
+- Usage analytics (opt‑in)
+- Secret vault provider support
+
+Contributions & suggestions welcome.

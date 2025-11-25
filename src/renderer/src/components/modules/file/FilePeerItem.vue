@@ -1,7 +1,17 @@
 <template>
   <div class="px-4">
-    <div class="flex">
+    <div class="flex items-center gap-2">
       <h2>{{ client.name }}</h2>
+      <NButton text style="font-size: 20px" @click="isExpand = !isExpand">
+        <NIcon>
+          <ExpandMoreIcon
+            :style="{
+              transform: isExpand ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.3s ease'
+            }"
+          />
+        </NIcon>
+      </NButton>
       <div class="flex gap-2 ml-auto">
         <NInput v-model:value="path" placeholder="C:\Program Files" clearable>
           <template #prefix>
@@ -22,7 +32,7 @@
         <NButton type="info" :disabled="fileList.length === 0" @click="handleSync"> Sync </NButton>
       </div>
     </div>
-    <div class="mt-5 flex flex-col gap-2">
+    <div v-if="isExpand" class="mt-5 flex flex-col gap-2">
       <div v-for="(file, index) in fileList" :key="index" class="flex">
         <div>{{ file.path }}</div>
       </div>
@@ -34,8 +44,9 @@
 import { QueryFileListResponse, WireGuardClient } from '@shared/types'
 import type { ClientFile } from '@shared/types/client'
 import axios, { AxiosResponse } from 'axios'
-import { NButton, NInputNumber, NInput } from 'naive-ui'
+import { NButton, NInputNumber, NInput, NIcon } from 'naive-ui'
 import { computed, ref } from 'vue'
+import { ExpandMoreRound as ExpandMoreIcon } from '@vicons/material'
 
 const props = defineProps<{
   client: WireGuardClient
@@ -47,6 +58,7 @@ const isAllowGet = computed(() => {
   const isValidPath = !!path.value
   return isValidPort && isValidPath
 })
+const isExpand = ref(false)
 const fileList = ref<ClientFile[]>([])
 async function handleGet(): Promise<void> {
   const encodedPath = encodeURIComponent(path.value.replace(/\\/g, '/'))
@@ -54,7 +66,7 @@ async function handleGet(): Promise<void> {
   const result: AxiosResponse<QueryFileListResponse> = await axios.get(url)
   if (result.data.list) {
     fileList.value = result.data.list
-    console.log(fileList.value)
+    isExpand.value = true
   }
 }
 async function handleSync(): Promise<void> {

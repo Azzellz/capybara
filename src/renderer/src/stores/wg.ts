@@ -49,6 +49,9 @@ export const useWgStore = defineStore('wg-store', () => {
   const keepAliveClients = computed(() => {
     return clients.value.filter((c) => c.isKeepAlive)
   })
+  const availableClients = computed(() => {
+    return clients.value.filter((c) => c.isKeepAlive || c.id === currentClient.value?.id)
+  })
   const idleClients = computed(() => {
     return clients.value.filter((c) => !c.isKeepAlive && c.id !== currentClient.value?.id)
   })
@@ -108,6 +111,7 @@ export const useWgStore = defineStore('wg-store', () => {
     sync,
     delayMap,
     keepAliveClients,
-    idleClients
+    idleClients,
+    availableClients
   }
 })

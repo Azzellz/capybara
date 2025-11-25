@@ -1,7 +1,7 @@
 <template>
-  <div class="px-4">
+  <div class="p-2">
     <div class="flex items-center gap-2">
-      <h2>{{ client.name }}</h2>
+      <span :class="titleStyle">{{ client.name }}</span>
       <NButton text style="font-size: 20px" @click="isExpand = !isExpand">
         <NIcon>
           <ExpandMoreIcon
@@ -44,15 +44,29 @@
 import { QueryFileListResponse, WireGuardClient } from '@shared/types'
 import type { ClientFile } from '@shared/types/client'
 import axios, { AxiosResponse } from 'axios'
-import { NButton, NInputNumber, NInput, NIcon } from 'naive-ui'
+import { NButton, NInputNumber, NInput, NIcon, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
 import { ExpandMoreRound as ExpandMoreIcon } from '@vicons/material'
 
 const props = defineProps<{
   client: WireGuardClient
+  isCurrent: boolean
 }>()
+
+const titleStyle = computed(() => {
+  const base = 'text-2xl font-bold'
+  if (props.isCurrent) {
+    return base + ' text-green-600 '
+  } else if (props.client.isKeepAlive) {
+    return base + ' text-yellow'
+  } else {
+    return base + ' text-blue'
+  }
+})
+
 const path = ref('')
 const port = ref(3000)
+const message = useMessage()
 const isAllowGet = computed(() => {
   const isValidPort = port.value >= 1024 && port.value <= 65535
   const isValidPath = !!path.value
@@ -67,6 +81,7 @@ async function handleGet(): Promise<void> {
   if (result.data.list) {
     fileList.value = result.data.list
     isExpand.value = true
+    message.success('File list retrieved successfully')
   }
 }
 async function handleSync(): Promise<void> {

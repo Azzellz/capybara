@@ -3,9 +3,12 @@
 <img src="docs/images/logo.png" alt="Capybara" height="140"/>
 
 <br/>
-<!-- Badgen tags -->
-<img src="https://badgen.net/badge/Capybara/WireGuard%20Client/cyan" alt="Capybara WireGuard Client"/>
-<img src="https://badgen.net/badge/version/v1.1.0/blue" alt="Version"/>
+<!-- Latest Release -->
+<img src="https://badgen.net/github/release/Azzellz/capybara" alt="Latest Release"/>
+<!-- License -->
+<img src="https://badgen.net/github/license/Azzellz/capybara" alt="License"/>
+<!-- CI Passing -->
+<img src="https://badgen.net/github/checks/Azzellz/capybara/main" alt="CI Status"/>
 
 </div>
 

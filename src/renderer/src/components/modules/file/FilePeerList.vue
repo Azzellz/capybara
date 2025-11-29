@@ -27,6 +27,7 @@ const props = defineProps<{
 
 const wgStore = useWgStore()
 const message = useMessage()
+const serverPort = ref()
 
 const syncStatusRecordMap = ref<Map<string, FileSyncStatus>>(new Map())
 function flattenFileTree(files: ClientFile[]): ClientFile[] {
@@ -45,6 +46,11 @@ async function handleSync(
   baseURL: string,
   fileList: ClientFile[]
 ): Promise<void> {
+  // get server port
+  if (!serverPort.value) {
+    serverPort.value = await window.ipcInvoke.getServerPort()
+  }
+
   // reset status map
   syncStatusRecordMap.value = new Map()
 
@@ -88,7 +94,7 @@ async function handleSync(
     form.append('path', targetPath + relativePath)
     form.append('overwrite', 'true')
     const uploadResult = await axios.postForm(
-      `//${wgStore.currentClient?.address}:3000/file/upload`,
+      `//${wgStore.currentClient?.address}:${serverPort.value}/file/upload`,
       form
     )
     if (uploadResult.status !== 200) {

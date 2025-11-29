@@ -9,7 +9,13 @@ app.get('/', (c) => c.text('Hello Capybara!'))
 app.route('/file', FileService)
 
 export async function startHttpServer(): Promise<void> {
-  serve(app, (info) => {
-    console.log(`Capybara Server Listening on http://${info.address}:${info.port}`)
-  })
+  serve(
+    {
+      ...app,
+      port: parseInt(process.env.MAIN_VITE_SERVER_PORT || '3000')
+    },
+    (info) => {
+      console.log(`Capybara Server Listening on http://${info.address}:${info.port}`)
+    }
+  )
 }

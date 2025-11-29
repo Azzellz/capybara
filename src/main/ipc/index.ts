@@ -4,12 +4,14 @@ import { API } from '../api'
 import { RemoveFirstParamFromFunctions } from '@shared/types'
 import { configIpcHandlers } from './config'
 import { systemIpcHandlers } from './system'
+import { serverIpcHandlers } from './server'
 
 const ipcHandlers = {
   // IPC handlers will be registered here
   ...wireguardIpcHandlers,
   ...configIpcHandlers,
-  ...systemIpcHandlers
+  ...systemIpcHandlers,
+  ...serverIpcHandlers
 }
 
 export type IpcHandlers = RemoveFirstParamFromFunctions<typeof ipcHandlers>

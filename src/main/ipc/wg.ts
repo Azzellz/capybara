@@ -1,19 +1,22 @@
 import type { RemoveFirstParamFromFunctions, WireGuardCode } from '@shared/types'
-import { execa } from 'execa'
 import { getResourceFilePath, parseWireGuardShow } from '../utils'
 import { writeFile, mkdir, rm } from 'fs/promises'
-import { API } from '../api'
 import { notification } from '../utils/system'
+import { execa } from 'execa'
+import { API } from '../api'
 
+const execaOptions: { stdio: ['ignore', 'pipe', 'pipe'] } = {
+  stdio: ['ignore', 'pipe', 'pipe']
+}
 export const wireguardIpcHandlers = {
   async startWireGuard(_, name: string) {
     try {
+      const configPath = getResourceFilePath(`wireguard/conf/${name}.conf`)
+      const startCommand = process.platform === 'win32' ? '/installtunnelservice' : 'up'
       const result = await execa(
-        getResourceFilePath('wireguard/bin/wireguard'),
-        ['/installtunnelservice', getResourceFilePath(`wireguard/conf/${name}.conf`)],
-        {
-          stdio: ['ignore', 'pipe', 'pipe']
-        }
+        getResourceFilePath(`wireguard/bin/${process.platform}/wg-quick`),
+        [startCommand, configPath],
+        execaOptions
       )
 
       if (result.exitCode === 0) {
@@ -30,12 +33,12 @@ export const wireguardIpcHandlers = {
   },
   async stopWireGuard(_, name: string) {
     try {
+      // const configPath = getResourceFilePath(`wireguard/conf/${name}.conf`)
+      const downCommand = process.platform === 'win32' ? '/uninstalltunnelservice' : 'down'
       const result = await execa(
-        getResourceFilePath('wireguard/bin/wireguard.exe'),
-        ['/uninstalltunnelservice', name],
-        {
-          stdio: ['ignore', 'pipe', 'pipe']
-        }
+        getResourceFilePath(`wireguard/bin/${process.platform}/wg-quick`),
+        [downCommand, name],
+        execaOptions
       )
 
       if (result.exitCode === 0) {
@@ -53,9 +56,11 @@ export const wireguardIpcHandlers = {
   },
   async getWireGuardStatus() {
     try {
-      const { stdout } = await execa(getResourceFilePath('wireguard/bin/wg.exe'), ['show'], {
-        stdio: ['ignore', 'pipe', 'pipe']
-      })
+      const { stdout } = await execa(
+        getResourceFilePath(`wireguard/bin/${process.platform}/wg`),
+        ['show'],
+        execaOptions
+      )
       const show = parseWireGuardShow(stdout)
       return JSON.stringify(show)
     } catch (error) {

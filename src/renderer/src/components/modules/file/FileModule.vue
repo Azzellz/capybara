@@ -10,7 +10,7 @@ const targetPath = ref('')
 <template>
   <main class="py-2">
     <FileActions v-model:target-path="targetPath" />
-    <NDivider />
+    <NDivider style="margin-top: 5px" />
     <FilePeerList :target-path="targetPath" />
   </main>
 </template>

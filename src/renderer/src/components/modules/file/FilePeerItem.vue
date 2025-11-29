@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2">
+  <div class="px-2">
     <div class="flex items-center gap-2">
       <span :class="titleStyle">{{ client.name }}</span>
       <NButton text style="font-size: 20px" @click="isExpand = !isExpand">
@@ -12,15 +12,24 @@
           />
         </NIcon>
       </NButton>
-      <div class="flex gap-2 ml-auto">
-        <NInput v-model:value="path" placeholder="C:\Program Files" clearable>
+      <div class="flex items-center gap-2 ml-auto text-sm">
+        <NInput
+          v-model:value="path"
+          size="small"
+          class="items-center"
+          style="max-width: 250px"
+          placeholder="C:\Program Files"
+          clearable
+        >
           <template #prefix>
             <span class="text-gray"> Source: </span>
           </template>
         </NInput>
         <NInputNumber
           v-model:value="port"
-          style="max-width: 150px"
+          size="small"
+          class="items-center"
+          style="max-width: 175px"
           :min="1024"
           :max="65535"
           :default-value="3000"
@@ -28,14 +37,35 @@
         >
           <template #prefix> <span class="text-gray"> Port: </span> </template>
         </NInputNumber>
-        <NButton type="primary" :disabled="!isAllowGet" @click="handleGet"> Get </NButton>
-        <NButton type="info" :disabled="selectedFileList.length === 0" @click="handleSync">
-          Sync
+        <NButton size="small" type="primary" :disabled="!isAllowGet" @click="handleGet">
+          <NIcon>
+            <GetIcon />
+          </NIcon>
         </NButton>
-        <NButton type="warning" :disabled="fileList.length === 0" @click="handleSelectAll">
+        <NButton
+          size="small"
+          type="info"
+          :disabled="selectedFileList.length === 0"
+          @click="handleSync"
+        >
+          <NIcon>
+            <SyncIcon />
+          </NIcon>
+        </NButton>
+        <NButton
+          size="small"
+          type="warning"
+          :disabled="fileList.length === 0"
+          @click="handleSelectAll"
+        >
           {{ selectedFileList.length === fileList.length ? 'UnAll' : 'All' }}
         </NButton>
-        <NButton type="error" :disabled="fileList.length === 0" @click="handleResetFiles">
+        <NButton
+          size="small"
+          type="error"
+          :disabled="fileList.length === 0"
+          @click="handleResetFiles"
+        >
           Reset
         </NButton>
       </div>
@@ -57,7 +87,11 @@ import type { ClientFile, FileSyncStatus } from '@shared/types/client'
 import axios, { type AxiosResponse } from 'axios'
 import { NButton, NInputNumber, NInput, NIcon, useMessage } from 'naive-ui'
 import { computed, ref } from 'vue'
-import { ExpandMoreRound as ExpandMoreIcon } from '@vicons/material'
+import {
+  ExpandMoreRound as ExpandMoreIcon,
+  SearchRound as GetIcon,
+  CloudSyncRound as SyncIcon
+} from '@vicons/material'
 import FileTree from './FileTree.vue'
 
 const props = defineProps<{

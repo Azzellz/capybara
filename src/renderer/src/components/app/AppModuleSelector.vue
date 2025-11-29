@@ -1,24 +1,34 @@
 <script setup lang="ts">
-import { NButton } from 'naive-ui'
+import { NButton, NIcon } from 'naive-ui'
 import { useGlobalStore } from '@renderer/stores/global'
-
+import {
+  AccountCircleRound as ClientIcon,
+  DriveFileMoveOutlined as FileIcon
+} from '@vicons/material'
 const globalStore = useGlobalStore()
 </script>
 
 <template>
-  <div class="flex items-center gap2 relative">
+  <div class="flex items-center gap-3">
     <NButton
+      text
+      style="font-size: 32px"
       :type="globalStore.currentModule === 'client' ? 'primary' : 'default'"
       @click="globalStore.currentModule = 'client'"
     >
-      Client
+      <NIcon>
+        <ClientIcon />
+      </NIcon>
     </NButton>
-    <!-- <NDivider vertical /> -->
     <NButton
+      text
+      style="font-size: 32px"
       :type="globalStore.currentModule === 'file' ? 'primary' : 'default'"
       @click="globalStore.currentModule = 'file'"
     >
-      File
+      <NIcon>
+        <FileIcon />
+      </NIcon>
     </NButton>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
-  <NCard class="shadow-[2px_2px_2px_2px_#333]" content-style="padding: 0px">
-    <div class="flex items-center p-6">
+  <NCard class="shadow-[2px_2px_2px_2px_#333] px-6 pt-6 pb-4" content-style="padding: 0px">
+    <div class="flex items-center">
       <div class="ml-2">
         <div class="flex items-center">
           <img
@@ -31,6 +31,7 @@
         </NButton>
       </div>
     </div>
+    <AppModuleSelector class="mt-2 ml-0.5" />
   </NCard>
 </template>
 
@@ -43,6 +44,7 @@ import { useSettingStore } from '@renderer/stores/setting'
 import QuestionAnswer from '../qa/QuestionAnswer.vue'
 import ThemeIcon from '../icon/Theme.vue'
 import { cloneDeep } from 'lodash'
+import AppModuleSelector from './AppModuleSelector.vue'
 
 const modal = useModal()
 const settingStore = useSettingStore()

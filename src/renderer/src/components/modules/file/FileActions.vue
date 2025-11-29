@@ -1,5 +1,5 @@
 <template>
-  <div class="px-4 flex items-center gap-2">
+  <div class="px-4 flex items-center">
     <h2 class="text-2xl p-4">File Module</h2>
     <div class="flex items-center ml-auto">
       <NInput

@@ -1,73 +1,75 @@
 <template>
-  <div class="px-2">
-    <div class="flex items-center gap-2">
-      <span :class="titleStyle">{{ client.name }}</span>
-      <NButton text style="font-size: 20px" @click="isExpand = !isExpand">
-        <NIcon>
-          <ExpandMoreIcon
-            :style="{
-              transform: isExpand ? 'rotate(180deg)' : 'rotate(0deg)',
-              transition: 'transform 0.3s ease'
-            }"
-          />
-        </NIcon>
-      </NButton>
-      <div class="flex items-center gap-2 ml-auto text-sm">
-        <NInput
-          v-model:value="path"
-          size="small"
-          class="items-center"
-          style="max-width: 250px"
-          placeholder="C:\Program Files"
-          clearable
-        >
-          <template #prefix>
-            <span class="text-gray"> Source: </span>
-          </template>
-        </NInput>
-        <NInputNumber
-          v-model:value="port"
-          size="small"
-          class="items-center"
-          style="max-width: 175px"
-          :min="1024"
-          :max="65535"
-          :default-value="3000"
-          placeholder="..."
-        >
-          <template #prefix> <span class="text-gray"> Port: </span> </template>
-        </NInputNumber>
-        <NButton size="small" type="primary" :disabled="!isAllowGet" @click="handleGet">
+  <div class="p-5">
+    <div>
+      <div class="flex items-center gap-2">
+        <h2 :class="titleStyle">{{ client.name }}</h2>
+        <NButton text style="font-size: 20px" @click="isExpand = !isExpand">
           <NIcon>
-            <GetIcon />
+            <ExpandMoreIcon
+              :style="{
+                transform: isExpand ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 0.3s ease'
+              }"
+            />
           </NIcon>
         </NButton>
-        <NButton
-          size="small"
-          type="info"
-          :disabled="selectedFileList.length === 0"
-          @click="handleSync"
-        >
-          <NIcon>
-            <SyncIcon />
-          </NIcon>
-        </NButton>
-        <NButton
-          size="small"
-          type="warning"
-          :disabled="fileList.length === 0"
-          @click="handleSelectAll"
-        >
-          {{ selectedFileList.length === fileList.length ? 'UnAll' : 'All' }}
-        </NButton>
-        <NButton
-          size="small"
-          type="error"
-          :disabled="fileList.length === 0"
-          @click="handleResetFiles"
-        >
-          Reset
-        </NButton>
+        <div class="flex items-center gap-2 ml-auto text-sm">
+          <NInput
+            v-model:value="path"
+            size="small"
+            class="items-center"
+            style="max-width: 250px"
+            placeholder="C:\Program Files"
+            clearable
+          >
+            <template #prefix>
+              <span class="text-gray"> Source: </span>
+            </template>
+          </NInput>
+          <NInputNumber
+            v-model:value="port"
+            size="small"
+            class="items-center"
+            style="max-width: 175px"
+            :min="1024"
+            :max="65535"
+            :default-value="3000"
+            placeholder="..."
+          >
+            <template #prefix> <span class="text-gray"> Port: </span> </template>
+          </NInputNumber>
+          <NButton size="small" type="primary" :disabled="!isAllowGet" @click="handleGet">
+            <NIcon>
+              <GetIcon />
+            </NIcon>
+          </NButton>
+          <NButton
+            size="small"
+            type="info"
+            :disabled="selectedFileList.length === 0"
+            @click="handleSync"
+          >
+            <NIcon>
+              <SyncIcon />
+            </NIcon>
+          </NButton>
+          <NButton
+            size="small"
+            type="warning"
+            :disabled="fileList.length === 0"
+            @click="handleSelectAll"
+          >
+            {{ selectedFileList.length === fileList.length ? 'UnAll' : 'All' }}
+          </NButton>
+          <NButton
+            size="small"
+            type="error"
+            :disabled="fileList.length === 0"
+            @click="handleResetFiles"
+          >
+            Reset
+          </NButton>
+        </div>
       </div>
     </div>
     <!-- File Tree -->

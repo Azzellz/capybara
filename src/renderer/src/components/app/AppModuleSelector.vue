@@ -12,7 +12,7 @@ const globalStore = useGlobalStore()
   <div class="flex items-center gap-3">
     <NButton
       text
-      style="font-size: 32px"
+      style="font-size: 28px"
       :type="globalStore.currentModule === 'client' ? 'primary' : 'default'"
       @click="globalStore.currentModule = 'client'"
     >

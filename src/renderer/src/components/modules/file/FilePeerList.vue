@@ -2,14 +2,13 @@
   <NScrollbar style="height: 320px" class="flex flex-col gap-5 pb-4">
     <template v-for="client in wgStore.clients" :key="client.id">
       <FilePeerItem
-        class="mx-4"
         :client="client"
         :is-current="wgStore.getIsCurrent(client)"
         :status-map="syncStatusRecordMap"
         @sync="(baseURL, sourcePath, fileList) => handleSync(client, sourcePath, baseURL, fileList)"
         @reset-status="handleResetStatusMap"
       />
-      <NDivider />
+      <NDivider style="margin-block: 5px" />
     </template>
   </NScrollbar>
 </template>

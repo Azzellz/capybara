@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/block-lang -->
 <template>
-  <div class="p-5 flex gap-2 rounded-md border border-gray-300">
+  <div class="p-5 flex gap-2">
     <div>
       <div class="flex items-center gap-2">
         <h2 :class="titleStyle">{{ client.name }}</h2>
@@ -24,7 +24,6 @@
         </template>
       </div>
     </div>
-
     <div class="flex gap-2 items-center ml-auto">
       <NButton
         v-if="!isWgRunning || !isCurrent"

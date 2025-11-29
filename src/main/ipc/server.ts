@@ -1,7 +1,7 @@
 import type { RemoveFirstParamFromFunctions } from '@shared/types'
 
 export const serverIpcHandlers = {
-  getServerPort() {
+  async getServerPort(): Promise<string> {
     return process.env.MAIN_VITE_SERVER_PORT || '3000'
   }
 }

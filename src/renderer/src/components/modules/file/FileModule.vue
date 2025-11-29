@@ -12,7 +12,7 @@ const targetPath = ref('')
     <FileActions v-model:target-path="targetPath" />
     <NDivider style="margin-block: 5px">
       <div class="flex items-center text-sm">
-        <span class="text-gray-500"> Peer List </span>
+        <span class="text-gray-500"> Sync files with peers </span>
       </div>
     </NDivider>
     <FilePeerList :target-path="targetPath" />

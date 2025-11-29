@@ -1,6 +1,6 @@
 <template>
   <NScrollbar style="height: 320px" class="flex flex-col gap-5 pb-4">
-    <template v-for="client in wgStore.clients" :key="client.id">
+    <template v-for="client in wgStore.availableClients" :key="client.id">
       <FilePeerItem
         :client="client"
         :is-current="wgStore.getIsCurrent(client)"

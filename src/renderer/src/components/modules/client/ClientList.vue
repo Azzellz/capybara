@@ -41,7 +41,7 @@ async function handleStop(client: WireGuardClient) {
 </script>
 
 <template>
-  <NScrollbar style="height: 350px" class="flex flex-col gap-5 pb-4">
+  <NScrollbar style="height: 320px" class="flex flex-col gap-5 pb-4">
     <template v-for="client in wgStore.clients" :key="client.id">
       <ClientLine
         :client="client"

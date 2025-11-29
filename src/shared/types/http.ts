@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ClientFile } from './client'
+
 export interface QueryFileListResponse {
-  path: string
-  exists: boolean
-  size: number
-  name: string
+  list: ClientFile[]
 }
 export interface DownloadFileRequest {
   path: string
